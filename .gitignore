@@ -1,0 +1,20 @@
+# Bỏ qua thư viện thư mục Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Bỏ qua các file môi trường (chứa biến bảo mật)
+.env
+frontend/.env
+backend/.env
+
+# Bỏ qua các file thực thi của Go (nếu có build ra)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Bỏ qua rác hệ điều hành
+.DS_Store
+Thumbs.db
