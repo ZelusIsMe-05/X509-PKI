@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	// Khởi tạo SQLite DB
+	// Initialize SQLite DB and create tables if they do not exist
 	repository.InitDB()
 
 	router.SetupRoutes()

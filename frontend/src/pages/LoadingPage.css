@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.ldp-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 50% 40%, #1e3a5f 0%, #111827 65%);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Same spinning-dot ring as LoginPage */
+.ldp-container {
+  position: relative;
+  width: 256px;
+  height: 256px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ldp-container span {
+  position: absolute;
+  left: 0;
+  width: 32px;
+  height: 6px;
+  background: #2e4d72;
+  border-radius: 8px;
+  transform-origin: 128px;
+  transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
+  animation: animateBlink 3s linear infinite;
+  animation-delay: calc(var(--i) * (3s / 50));
+}
+
+@keyframes animateBlink {
+  0%   { background: #00dcf5; filter: drop-shadow(0 0 4px rgba(0,220,245,0.5)); }
+  25%  { background: #2e4d72; filter: drop-shadow(0 0 0px transparent); }
+}
+
+.ldp-text {
+  position: relative;
+  font-size: 0.85em;
+  color: #8fa8c0;
+  letter-spacing: 0.5px;
+}

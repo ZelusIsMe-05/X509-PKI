@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* ─── Reset ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ─── Page wrapper ────────────────────────────────────── */
+.lp-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Brighter, livelier background gradient */
+  background: radial-gradient(ellipse at 50% 40%, #1e3a5f 0%, #111827 65%);
+}
+
+/* ─── Spinning-dot ring ───────────────────────────────── */
+/* Scaled up: container 320×320, transform-origin 160px */
+.lp-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lp-container span {
+  position: absolute;
+  left: 10px;
+  width: 40px;   /* was 32px — proportionally larger */
+  height: 7px;   /* was 6px */
+  background: #2e4d72;
+  border-radius: 8px;
+  transform-origin: 150px;    /* half of 320px container */
+  transform: scale(2.3) rotate(calc(var(--i) * (360deg / 50)));
+  animation: animateBlink 3s linear infinite;
+  animation-delay: calc(var(--i) * (3s / 50));
+  filter: drop-shadow(0 0 0px transparent);
+}
+
+@keyframes animateBlink {
+  0%   { background: #00dcf5; filter: drop-shadow(0 0 4px rgba(0,220,245,0.6)); }
+  25%  { background: #2e4d72; filter: drop-shadow(0 0 0px transparent); }
+}
+
+/* ─── Auth card ───────────────────────────────────────── */
+.lp-login-box {
+  position: absolute;
+  width: 480px;  /* was 400px */
+}
+
+.lp-form {
+  width: 100%;
+  padding: 0 52px;
+}
+
+/* ─── Title ───────────────────────────────────────────── */
+.lp-title {
+  font-size: 2.4em;   /* was 2em */
+  font-weight: 700;
+  color: #00dcf5;
+  text-align: center;
+  margin-bottom: 28px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(0,220,245,0.3);
+}
+
+/* ─── Floating-label input ────────────────────────────── */
+.lp-input-box {
+  position: relative;
+  margin: 28px 0;  /* was 25px */
+}
+
+.lp-input-box input {
+  width: 100%;
+  height: 54px;    /* was 50px */
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid #2e4d72;
+  border-radius: 40px;
+  outline: none;
+  font-size: 1em;
+  color: #dce8f5;
+  padding: 0 22px;
+  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+}
+
+.lp-input-box input:focus {
+  border-color: #00dcf5;
+  background: rgba(0, 220, 245, 0.04);
+  box-shadow: 0 0 0 3px rgba(0, 220, 245, 0.1);
+}
+
+/* Label sits centered inside input */
+.lp-input-box label {
+  position: absolute;
+  top: 50%;
+  left: 22px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #6b8aaa;
+  pointer-events: none;
+  transition: 0.32s ease;
+  background: transparent;
+}
+
+/* Float label up when focused or filled */
+.lp-input-box input:focus ~ label,
+.lp-input-box input:not(:placeholder-shown) ~ label,
+.lp-input-box input:-webkit-autofill ~ label {
+  top: 0px;
+  font-size: 0.8em;
+  color: #00dcf5;
+  padding: 0 7px;
+  background: #182d4a;  /* matches container bg at that point */
+}
+
+/* Thêm dòng .lp-input-box input:-webkit-autofill ~ label vào selector */
+.lp-input-box input:focus ~ label,
+.lp-input-box input:not(:placeholder-shown) ~ label,
+.lp-input-box input:-webkit-autofill ~ label {
+  top: 0px;
+  font-size: 0.95em;
+  color: #00dcf5;
+  padding: 0 6px;
+  font-weight: 600;
+}
+
+/* ─── Forgot password ─────────────────────────────────── */
+.lp-forgot-pass {
+  margin: -14px 0 16px;
+  text-align: right;
+}
+
+.lp-forgot-pass a {
+  font-size: 0.82em;
+  color: #6b8aaa;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.lp-forgot-pass a:hover {
+  color: #00dcf5;
+}
+
+/* ─── Primary button ──────────────────────────────────── */
+.lp-btn {
+  width: 100%;
+  height: 48px;   /* was 45px */
+  background: #00dcf5;
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 1.05em;
+  color: #0f1a2e;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  transition: opacity 0.2s, transform 0.12s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 220, 245, 0.3);
+}
+
+.lp-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 220, 245, 0.45);
+}
+
+.lp-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 4px 16px rgba(0, 220, 245, 0.25);
+}
+
+.lp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ─── Switch-mode link row ────────────────────────────── */
+.lp-link-row {
+  margin: 22px 0 4px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #6b8aaa;
+}
+
+.lp-link-row button {
+  background: none;
+  border: none;
+  color: #00dcf5;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.lp-link-row button:hover {
+  opacity: 0.72;
+  text-decoration: underline;
+}
