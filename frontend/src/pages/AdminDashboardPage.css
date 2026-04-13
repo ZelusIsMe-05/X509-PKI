@@ -1,23 +1,23 @@
 /* ─── Page wrapper ────────────────────────────────────── */
-.client-body {
+.admin-body {
   display: flex;
-  height: 100vh;
+  height: 100vh; /* Fixed height! */
   width: 100vw;
-  overflow: hidden;
-  background: radial-gradient(ellipse at top right, #1a1a2e 0%, #0d0d1a 100%);
+  overflow: hidden; /* No scroll outside! */
+  background: radial-gradient(ellipse at top left, #1a2a40 0%, #0d131f 100%);
   color: #fff;
   transition: opacity 0.4s ease, transform 0.4s ease;
   font-family: 'Poppins', sans-serif;
 }
 
-.client-body.fade-out {
+.admin-body.fade-out {
   opacity: 0;
   transform: scale(0.96);
   pointer-events: none;
 }
 
 /* ─── Sidebar ─────────────────────────────────────────── */
-.client-sidebar {
+.admin-sidebar {
   background: rgba(255, 255, 255, 0.02);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(14px);
@@ -26,24 +26,24 @@
   display: flex;
   flex-direction: column;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 
-.client-sidebar.open {
+.admin-sidebar.open {
   width: 260px;
 }
 
-.client-sidebar.closed {
+.admin-sidebar.closed {
   width: 80px;
 }
 
-.client-logo {
+.admin-logo {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #a275ff;
+  color: #00dcf5;
   margin-bottom: 40px;
-  text-shadow: 0 0 15px rgba(162, 117, 255, 0.4);
+  text-shadow: 0 0 15px rgba(0, 220, 245, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,18 +52,18 @@
   overflow: hidden;
 }
 
-.client-sidebar.closed .client-logo {
+.admin-sidebar.closed .admin-logo {
   font-size: 1.8rem;
 }
 
-.client-nav {
+.admin-nav {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.client-nav-item {
+.admin-nav-item {
   padding: 14px;
   border-radius: 12px;
   color: #a0aec0;
@@ -78,30 +78,30 @@
   white-space: nowrap;
 }
 
-.client-sidebar.closed .client-nav-item {
+.admin-sidebar.closed .admin-nav-item {
   justify-content: center;
 }
 
-.client-nav-item span {
+.admin-nav-item span {
   font-size: 1.3rem;
 }
 
-.client-nav-item p {
+.admin-nav-item p {
   margin: 0;
 }
 
-.client-nav-item:hover, .client-nav-item.active {
-  background: rgba(162, 117, 255, 0.1);
-  color: #a275ff;
+.admin-nav-item:hover, .admin-nav-item.active {
+  background: rgba(0, 220, 245, 0.08);
+  color: #00dcf5;
   transform: translateX(4px);
 }
 
-.client-sidebar.closed .client-nav-item:hover {
+.admin-sidebar.closed .admin-nav-item:hover {
   transform: translateY(-2px);
 }
 
 /* ─── Topbar & Content Wrapper ────────────────────────── */
-.client-content-wrapper {
+.admin-content-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -109,7 +109,7 @@
   position: relative;
 }
 
-.client-topbar {
+.admin-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -133,10 +133,10 @@
 }
 
 .sidebar-toggle-btn:hover {
-  color: #a275ff;
+  color: #00dcf5;
 }
 
-.client-logout-btn {
+.admin-logout-btn {
   background: rgba(255, 59, 48, 0.08);
   color: #ff453a;
   border: 1px solid rgba(255, 59, 48, 0.15);
@@ -151,41 +151,40 @@
   gap: 8px;
 }
 
-.client-logout-btn:hover {
+.admin-logout-btn:hover {
   background: rgba(255, 59, 48, 0.15);
   box-shadow: 0 0 20px rgba(255, 59, 48, 0.2);
   transform: translateY(-1px);
 }
 
-
-/* ─── Main Content View ───────────────────────────────── */
-.client-main {
+/* ─── Main View ───────────────────────────────────────── */
+.admin-main {
   flex: 1;
   padding: 30px 40px 60px 40px;
-  overflow-y: auto; /* Allow scroll inside main window */
+  overflow-y: auto; /* Scroll inside grid view ONLY */
 }
 
-/* Decorative ambient glow in background */
-.client-main::before {
+/* Ambient glow */
+.admin-main::before {
   content: '';
   position: absolute;
   top: 10%; right: -5%;
   width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(162, 117, 255, 0.06) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(0, 220, 245, 0.08) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
 
-.client-header {
+.admin-header {
   position: relative;
   z-index: 1;
   margin-bottom: 30px;
 }
 
-.client-header h1 {
+.admin-header h1 {
   font-size: 2.2rem;
   margin-bottom: 5px;
-  background: linear-gradient(135deg, #ffffff, #d3c4ff);
+  background: linear-gradient(135deg, #ffffff, #a0aec0);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -193,25 +192,14 @@
   letter-spacing: -0.5px;
 }
 
-.client-header p {
-  color: #a59fb5;
+.admin-header p {
+  color: #8bb0d9;
   font-size: 1rem;
   opacity: 0.8;
 }
 
-.client-message {
-  margin-top: 15px;
-  padding: 10px 15px;
-  background: rgba(162, 117, 255, 0.15);
-  border: 1px solid rgba(162, 117, 255, 0.3);
-  border-radius: 8px;
-  color: #d3c4ff;
-  font-size: 0.95rem;
-  display: inline-block;
-}
-
 /* ─── Cards Grid ──────────────────────────────────────── */
-.client-grid {
+.admin-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
@@ -220,7 +208,7 @@
   padding-bottom: 40px;
 }
 
-.client-card {
+.admin-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 18px;
@@ -232,28 +220,28 @@
   backdrop-filter: blur(8px);
 }
 
-.client-card::before {
+.admin-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at 50% 0%, rgba(162, 117, 255, 0.15), transparent 70%);
+  background: radial-gradient(circle at 50% 0%, rgba(0, 220, 245, 0.15), transparent 70%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
 
-.client-card:hover {
+.admin-card:hover {
   transform: translateY(-6px) scale(1.02);
-  border-color: rgba(162, 117, 255, 0.4);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(162, 117, 255, 0.15);
+  border-color: rgba(0, 220, 245, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 220, 245, 0.15);
   background: rgba(255, 255, 255, 0.05);
 }
 
-.client-card:hover::before {
+.admin-card:hover::before {
   opacity: 1;
 }
 
-.client-card-icon {
+.admin-card-icon {
   font-size: 2.2rem;
   margin-bottom: 15px;
   display: inline-block;
@@ -261,11 +249,11 @@
   transition: transform 0.3s ease;
 }
 
-.client-card:hover .client-card-icon {
+.admin-card:hover .admin-card-icon {
   transform: scale(1.1) rotate(-5deg);
 }
 
-.client-card-title {
+.admin-card-title {
   font-size: 1.15rem;
   font-weight: 600;
   margin-bottom: 10px;
@@ -273,7 +261,7 @@
   letter-spacing: -0.2px;
 }
 
-.client-card-desc {
+.admin-card-desc {
   font-size: 0.9rem;
   color: #a0aec0;
   line-height: 1.5;

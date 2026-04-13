@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"x509-pki/internal/crypto"
 	"x509-pki/internal/model"
 
 	_ "modernc.org/sqlite"
@@ -34,12 +35,16 @@ func InitDB() {
 	CREATE TABLE IF NOT EXISTS users (
 		username      TEXT PRIMARY KEY,
 		password_hash TEXT NOT NULL,
-		salt          TEXT NOT NULL
+		salt          TEXT NOT NULL,
+		role          TEXT DEFAULT 'client'
 	);`
 
 	if _, err := db.Exec(createUsersTable); err != nil {
 		log.Fatalf("❌ Failed to create users table: %v", err)
 	}
+
+	// Attempt to add role column to existing table (ignores error if column already exists)
+	db.Exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'client'")
 
 	// refresh_tokens table: stores SHA-256 hashed refresh tokens for rotation/revocation
 	createRefreshTokensTable := `
@@ -54,7 +59,46 @@ func InitDB() {
 	}
 
 	fmt.Println("✅ SQLite DB ready at: data/users.db")
+
+	// Seed admin user if it does not exist
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM users WHERE username = 'admin'").Scan(&count)
+	if count == 0 {
+		salt, err := crypto.GenerateSalt()
+		if err != nil {
+			log.Fatalf("❌ Failed to generate salt for admin: %v", err)
+		}
+		hash, err := crypto.HashPassword("Admin@x509-pki", salt)
+		if err != nil {
+			log.Fatalf("❌ Failed to hash password for admin: %v", err)
+		}
+		_, err = db.Exec(
+			"INSERT INTO users (username, password_hash, salt, role) VALUES (?, ?, ?, ?)",
+			"admin", hash, salt, "admin",
+		)
+		if err != nil {
+			log.Fatalf("❌ Failed to seed admin user: %v", err)
+		}
+		fmt.Println("✅ Seeded admin user (admin / Admin@x509-pki)")
+	}
+
+	// 🕒 Start background job to prune expired refresh tokens automatically
+	go startTokenCleanupDaemon()
 }
+
+// startTokenCleanupDaemon runs an infinite loop in a background goroutine,
+// triggering DeleteExpiredRefreshTokens once every hour to prevent DB bloat.
+func startTokenCleanupDaemon() {
+	// First run immediately
+	DeleteExpiredRefreshTokens()
+	
+	// Then trigger every 1 hour
+	ticker := time.NewTicker(1 * time.Hour)
+	for range ticker.C {
+		DeleteExpiredRefreshTokens()
+	}
+}
+
 
 // ─────────────────────────────────────────────────────────────────
 // USER REPOSITORY
@@ -73,9 +117,10 @@ func Exists(username string) bool {
 
 // SaveHashed inserts a new user with a pre-computed password hash and salt.
 func SaveHashed(username, passwordHash, salt string) error {
+	role := "client"
 	_, err := db.Exec(
-		"INSERT INTO users (username, password_hash, salt) VALUES (?, ?, ?)",
-		username, passwordHash, salt,
+		"INSERT INTO users (username, password_hash, salt, role) VALUES (?, ?, ?, ?)",
+		username, passwordHash, salt, role,
 	)
 	if err != nil {
 		log.Printf("⚠️ Error saving user: %v", err)
@@ -88,9 +133,9 @@ func SaveHashed(username, passwordHash, salt string) error {
 func GetUserByUsername(username string) (model.UserDB, bool) {
 	var u model.UserDB
 	err := db.QueryRow(
-		"SELECT username, password_hash, salt FROM users WHERE username = ?",
+		"SELECT username, password_hash, salt, role FROM users WHERE username = ?",
 		username,
-	).Scan(&u.Username, &u.PasswordHash, &u.Salt)
+	).Scan(&u.Username, &u.PasswordHash, &u.Salt, &u.Role)
 
 	if err == sql.ErrNoRows {
 		return model.UserDB{}, false

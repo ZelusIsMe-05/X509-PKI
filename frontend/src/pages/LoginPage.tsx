@@ -17,6 +17,7 @@ interface ToastState {
   type: ToastProps['type'];
   title: string;
   message: string;
+  onCloseCallback?: () => void;
 }
 
 export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
@@ -28,12 +29,18 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
   // Thêm state này để chặn trình duyệt tự động điền lúc mới tải trang
   const [isReadOnly, setIsReadOnly] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
 
   // ── helpers ──────────────────────────────────────────────────
-  const showToast = (type: ToastProps['type'], title: string, message: string) =>
-    setToast({ type, title, message });
+  const showToast = (type: ToastProps['type'], title: string, message: string, onCloseCallback?: () => void) =>
+    setToast({ type, title, message, onCloseCallback });
 
-  const closeToast = () => setToast(null);
+  const closeToast = () => {
+    if (toast?.onCloseCallback) {
+      toast.onCloseCallback();
+    }
+    setToast(null);
+  };
 
   const switchMode = (m: Mode) => {
     setMode(m);
@@ -56,7 +63,10 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
     setLoading(true);
     try {
       const data = await loginUser(username, password);
-      onLoginSuccess(data.username);
+      setIsExiting(true);
+      setTimeout(() => {
+        onLoginSuccess(data.username);
+      }, 400);
     } catch (err: any) {
       const raw: string = err.message ?? '';
       const friendly = raw.includes('invalid username or password')
@@ -82,8 +92,9 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
     setLoading(true);
     try {
       await registerUser(username, password);
-      showToast('success', 'Account Created', 'Registration successful! You can now log in.');
-      switchMode('login');
+      showToast('success', 'Account Created', 'Registration successful! You can now log in.', () => {
+        switchMode('login');
+      });
     } catch (err: any) {
       const raw: string = err.message ?? '';
       const friendly = raw.includes('already exists')
@@ -97,7 +108,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
   // ── render ────────────────────────────────────────────────────
   return (
-    <div className="lp-body">
+    <div className={`lp-body ${isExiting ? 'fade-out' : ''}`}>
 
       {/* Toast notification modal */}
       {toast && (

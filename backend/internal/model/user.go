@@ -11,4 +11,5 @@ type UserDB struct {
 	Username     string
 	PasswordHash string
 	Salt         string
+	Role         string
 }

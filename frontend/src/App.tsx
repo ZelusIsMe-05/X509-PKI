@@ -3,6 +3,7 @@ import { verifySession, getStoredUsername, clearTokens } from './api/auth';
 import LoadingPage   from './pages/LoadingPage';
 import LoginPage     from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 // App-level state machine
 type AppState = 'loading' | 'login' | 'dashboard';
@@ -56,6 +57,14 @@ export default function App() {
     case 'loading':
       return <LoadingPage />;
     case 'dashboard':
+      if (loggedInUser === 'admin') {
+        return (
+          <AdminDashboardPage 
+            username={loggedInUser} 
+            onLogout={handleLogout} 
+          />
+        );
+      }
       return (
         <DashboardPage
           username={loggedInUser}
