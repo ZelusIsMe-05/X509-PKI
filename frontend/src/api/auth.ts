@@ -110,38 +110,20 @@ export const refreshAccessToken = async (): Promise<boolean> => {
 // ─────────────────────────────────────────────────────────────────
 
 // verifySession checks whether the stored access token is still valid by calling /api/auth/me.
-// If the access token is expired, it attempts a silent refresh before retrying.
+// It leverages apiCall to automatically attempt a silent refresh if the access token is expired.
 // Returns the username if the session is valid, or null otherwise.
 export const verifySession = async (): Promise<string | null> => {
-  const accessToken = getStoredAccessToken();
-  if (!accessToken) return null;
-
-  // Try verifying with the current access token
-  const result = await callMe(accessToken);
-  if (result) return result;
-
-  // Access token expired — attempt a silent refresh
-  const refreshed = await refreshAccessToken();
-  if (!refreshed) return null;
-
-  // Retry with the new access token
-  const newAccessToken = getStoredAccessToken();
-  if (!newAccessToken) return null;
-  return await callMe(newAccessToken);
-};
-
-// callMe is a helper that calls GET /api/auth/me with the given token.
-const callMe = async (accessToken: string): Promise<string | null> => {
   try {
-    const response = await fetch(`${API_URL}/auth/me`, {
+    // apiCall automatically handles Authorization header and 401 token refresh
+    const response = await apiCall(`${API_URL}/auth/me`, {
       method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     if (!response.ok) return null;
     const data = await response.json();
     return data.username as string;
   } catch {
+    // Will catch errors thrown by apiCall such as "Not authenticated" or "Session expired"
     return null;
   }
 };

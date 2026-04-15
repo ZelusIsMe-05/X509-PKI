@@ -63,6 +63,14 @@
   width: 480px;  /* was 400px */
 }
 
+/* Thêm logic để khi register (hoặc form dài ra), div vẫn tự co giãn tốt
+   Thay vì position: absolute chết, tạo một wrapper riêng cho vòng tròn logic */
+.lp-login-box-relative {
+  position: relative;
+  width: 480px;
+  z-index: 10;
+}
+
 .lp-form {
   width: 100%;
   padding: 0 52px;
@@ -137,6 +145,32 @@
   color: #00dcf5;
   padding: 0 6px;
   font-weight: 600;
+}
+
+/* ─── Password Toggle Icon ────────────────────────────── */
+.lp-password-toggle {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b8aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+  padding: 4px;
+}
+
+.lp-password-toggle:hover {
+  color: #00dcf5;
+}
+
+.lp-input-box input[type="password"],
+.lp-input-box input.lp-password-input {
+  padding-right: 50px;
 }
 
 /* ─── Forgot password ─────────────────────────────────── */
