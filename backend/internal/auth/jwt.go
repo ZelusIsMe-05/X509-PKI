@@ -2,17 +2,30 @@ package auth
 
 import (
 	"errors"
+	"log"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// In production, load the secret from an environment variable.
-const (
-	jwtSecret            = "x509-pki-super-secret-key-2024"
+var (
+	jwtSecret            string
 	AccessTokenDuration  = 15 * time.Minute
 	RefreshTokenDuration = 7 * 24 * time.Hour
 )
+
+// InitJWTSecret loads the JWT secret from environment variables.
+// Must be called after godotenv.Load() in main.
+func InitJWTSecret() {
+	jwtSecret = os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("❌ JWT_SECRET environment variable not set. Please set it in .env file")
+	}
+	if len(jwtSecret) < 32 {
+		log.Fatal("❌ JWT_SECRET must be at least 32 characters long for security")
+	}
+}
 
 // Claims is the JWT payload carrying the username and token type.
 type Claims struct {

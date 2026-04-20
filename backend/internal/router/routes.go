@@ -11,6 +11,7 @@ var Routes = []Route{
 	{"POST", "/api/auth/register", "Register User"},
 	{"POST", "/api/auth/login", "Login User"},
 	{"POST", "/api/auth/refresh", "Refresh JWT Token"},
+	{"POST", "/api/auth/logout", "Logout User (Protected)"},
 	{"GET", "/api/auth/me", "Get Current User (Protected)"},
 
 	// PKI (future)

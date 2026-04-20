@@ -111,10 +111,25 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
       showToast('error', 'Password Mismatch', 'Your passwords do not match. Please try again.');
       return;
     }
-    if (password.length < 6) {
-      showToast('error', 'Weak Password', 'Password must be at least 6 characters long.');
+    
+    // Validate password meets security requirements
+    if (password.length < 8) {
+      showToast('error', 'Weak Password', 'Password must be at least 8 characters long.');
       return;
     }
+    if (!/[A-Z]/.test(password)) {
+      showToast('error', 'Weak Password', 'Password must contain at least one uppercase letter (A-Z).');
+      return;
+    }
+    if (!/[a-z]/.test(password)) {
+      showToast('error', 'Weak Password', 'Password must contain at least one lowercase letter (a-z).');
+      return;
+    }
+    if (!/[0-9]/.test(password)) {
+      showToast('error', 'Weak Password', 'Password must contain at least one number (0-9).');
+      return;
+    }
+    
     setLoading(true);
     try {
       await registerUser(username, password);

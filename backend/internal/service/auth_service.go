@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"regexp"
 	"time"
 
 	pkicrypto "x509-pki/internal/crypto"
@@ -11,12 +12,64 @@ import (
 )
 
 // ─────────────────────────────────────────────────────────────────
+// INPUT VALIDATION
+// ─────────────────────────────────────────────────────────────────
+
+// ValidateUsername checks if username meets security requirements.
+func ValidateUsername(username string) error {
+	if len(username) < 3 {
+		return errors.New("username must be at least 3 characters long")
+	}
+	if len(username) > 50 {
+		return errors.New("username must be at most 50 characters long")
+	}
+	// Only allow alphanumeric, underscore, and hyphen
+	if !regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString(username) {
+		return errors.New("username can only contain letters, numbers, underscores, and hyphens")
+	}
+	return nil
+}
+
+// ValidatePassword checks if password meets security requirements.
+func ValidatePassword(password string) error {
+	if len(password) < 8 {
+		return errors.New("password must be at least 8 characters long")
+	}
+	if len(password) > 256 {
+		return errors.New("password must be at most 256 characters long")
+	}
+	// Check for at least one uppercase letter
+	if !regexp.MustCompile(`[A-Z]`).MatchString(password) {
+		return errors.New("password must contain at least one uppercase letter")
+	}
+	// Check for at least one lowercase letter
+	if !regexp.MustCompile(`[a-z]`).MatchString(password) {
+		return errors.New("password must contain at least one lowercase letter")
+	}
+	// Check for at least one digit
+	if !regexp.MustCompile(`[0-9]`).MatchString(password) {
+		return errors.New("password must contain at least one number")
+	}
+	return nil
+}
+
+// ─────────────────────────────────────────────────────────────────
 // REGISTER
 // ─────────────────────────────────────────────────────────────────
 
 // Register creates a new user whose password is hashed with Argon2id before
 // being stored in the database.
 func Register(user model.User) error {
+	// Validate username
+	if err := ValidateUsername(user.Username); err != nil {
+		return err
+	}
+
+	// Validate password
+	if err := ValidatePassword(user.Password); err != nil {
+		return err
+	}
+
 	if repository.Exists(user.Username) {
 		return errors.New("username already exists")
 	}

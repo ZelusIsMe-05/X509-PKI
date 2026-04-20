@@ -7,6 +7,10 @@ frontend/dist/
 frontend/.env
 backend/.env
 
+# Bỏ qua database runtime
+backend/data/
+data/
+
 # Bỏ qua các file thực thi của Go (nếu có build ra)
 *.exe
 *.exe~
@@ -14,6 +18,15 @@ backend/.env
 *.so
 *.dylib
 bin/
+
+# Bỏ qua IDE/Editor config
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Bỏ qua dependency lock files ở root
+package-lock.json
 
 # Bỏ qua rác hệ điều hành
 .DS_Store

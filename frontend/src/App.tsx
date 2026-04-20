@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { verifySession, getStoredUsername, clearTokens } from './api/auth';
+import { verifySession, getStoredUsername, logoutUser } from './api/auth';
 import LoadingPage   from './pages/LoadingPage';
 import LoginPage     from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -47,7 +47,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    clearTokens();
+    logoutUser();
     setLoggedInUser('');
     setSessionMsg('');
     setAppState('login');

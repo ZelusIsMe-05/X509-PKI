@@ -7,6 +7,7 @@ import (
 
 	"x509-pki/internal/auth"
 	"x509-pki/internal/model"
+	"x509-pki/internal/repository"
 	"x509-pki/internal/service"
 )
 
@@ -135,5 +136,55 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"username": claims.Username,
+	})
+}
+
+// ─────────────────────────────────────────────────────────────────
+// LOGOUT — revoke session
+// ─────────────────────────────────────────────────────────────────
+
+// LogoutHandler revokes the refresh token and ends the user session.
+// POST /api/auth/logout
+// Header:   Authorization: Bearer <access_token>
+// Body:     { "refresh_token": "..." }
+// Response: { "message": "Logged out successfully" }
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.RefreshToken == "" {
+		http.Error(w, "Invalid request body: refresh_token required", http.StatusBadRequest)
+		return
+	}
+
+	// Verify access token is valid (user is authenticated)
+	authHeader := r.Header.Get("Authorization")
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		http.Error(w, "Missing or invalid Authorization header", http.StatusUnauthorized)
+		return
+	}
+
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	claims, err := auth.ValidateToken(tokenString)
+	if err != nil {
+		http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
+		return
+	}
+
+	if claims.TokenType != "access" {
+		http.Error(w, "Not an access token", http.StatusUnauthorized)
+		return
+	}
+
+	// Revoke the refresh token
+	if err := repository.DeleteRefreshToken(body.RefreshToken); err != nil {
+		http.Error(w, "Failed to logout", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Logged out successfully",
 	})
 }

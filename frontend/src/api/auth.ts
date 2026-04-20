@@ -129,6 +129,32 @@ export const verifySession = async (): Promise<string | null> => {
 };
 
 // ─────────────────────────────────────────────────────────────────
+// LOGOUT
+// ─────────────────────────────────────────────────────────────────
+
+// logoutUser revokes the refresh token and clears local session data
+export const logoutUser = async (): Promise<void> => {
+  const refreshToken = getStoredRefreshToken();
+  const accessToken = getStoredAccessToken();
+
+  // Attempt to revoke token on server (best effort)
+  if (accessToken && refreshToken) {
+    try {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+    } catch {
+      // Silently fail - still clear local tokens even if server request fails
+    }
+  }
+
+  // Clear local tokens regardless of server response
+  clearTokens();
+};
+
+// ─────────────────────────────────────────────────────────────────
 // API CALL WRAPPER — automatic token injection and 401 retry
 // ─────────────────────────────────────────────────────────────────
 
